@@ -1,0 +1,6 @@
+*.o
+
+snake
+compile_flags.txt
+
+flake.*
