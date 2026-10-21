@@ -1,6 +1,8 @@
 #include "snake.h"
 
+#include <ncurses.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "config.h"
 #include "point.h"
@@ -25,18 +27,16 @@ struct Snake *create_snake(int start_x, int start_y)
 
     for (size_t i = 0; i < INITIAL_LENGTH; ++i)
     {
-        body[i] = malloc(sizeof(struct Point));
-        if (!body)
+        body[i] = create_point(start_x - i * (int)strlen(SNAKE_BODY), start_y);
+        if (!body[i])
         {
             free_snake(snake);
             return NULL;
         }
-
-        body[i]->x = start_x - i;
-        body[i]->y = start_y;
     }
 
-    struct Point *direction = malloc(sizeof(struct Point));
+    struct Point *direction =
+        create_point(DEFAULT_DIRECTION_X, DEFAULT_DIRECTION_Y);
     if (!direction)
     {
         free_snake(snake);
@@ -50,13 +50,16 @@ struct Snake *create_snake(int start_x, int start_y)
 
 void update_snake(struct Snake *snake)
 {
-    for (size_t i = snake->length - 1; i > 0; ++i)
+    for (size_t i = snake->length - 1; i > 0; --i)
     {
-        snake->body[i]->x = snake->body[i - 1]->y;
+        snake->body[i]->x = snake->body[i - 1]->x;
         snake->body[i]->y = snake->body[i - 1]->y;
     }
 
-    add_points(snake->body[0], snake->direction);
+    snake->body[0]->x =
+        (((snake->body[0]->x + snake->direction->x * (int)strlen(SNAKE_BODY)) % COLS) + COLS) % COLS;
+    snake->body[0]->y =
+        (((snake->body[0]->y + snake->direction->y) % LINES) + LINES) % LINES;
 }
 
 void free_snake(struct Snake *snake)

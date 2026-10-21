@@ -35,7 +35,7 @@ struct Point *move_snake(struct Point *direction, int key)
     case KEY_LEFT:
         if (dx == 0)
         {
-            dx = -1 * (int)strlen(SNAKE_BODY);
+            dx = -1;
             dy = 0;
         }
         break;
@@ -43,7 +43,7 @@ struct Point *move_snake(struct Point *direction, int key)
     case KEY_RIGHT:
         if (dx == 0)
         {
-            dx = 1 * strlen(SNAKE_BODY);
+            dx = 1;
             dy = 0;
         }
         break;

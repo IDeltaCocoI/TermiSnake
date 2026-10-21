@@ -1,9 +1,9 @@
-#include <stddef.h>
 #define _DEFAULT_SOURCE
 #include <ncurses.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <stddef.h>
 
 #include "config.h"
 #include "movement.h"
