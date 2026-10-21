@@ -3,4 +3,4 @@
 snake
 compile_flags.txt
 
-flake.*
+flake.lock
