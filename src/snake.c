@@ -57,7 +57,10 @@ void update_snake(struct Snake *snake)
     }
 
     snake->body[0]->x =
-        (((snake->body[0]->x + snake->direction->x * (int)strlen(SNAKE_BODY)) % COLS) + COLS) % COLS;
+        (((snake->body[0]->x + snake->direction->x * (int)strlen(SNAKE_BODY))
+          % COLS)
+         + COLS)
+        % COLS;
     snake->body[0]->y =
         (((snake->body[0]->y + snake->direction->y) % LINES) + LINES) % LINES;
 }
@@ -81,4 +84,24 @@ void free_snake(struct Snake *snake)
     }
 
     free(snake);
+}
+
+struct Snake *grow_snake(struct Snake *snake)
+{
+    snake->length++;
+
+    snake->body = realloc(snake->body, snake->length * sizeof(struct Point *));
+    if (!snake->body)
+    {
+        return NULL;
+    }
+
+    struct Point *tail = snake->body[snake->length - 2];
+    snake->body[snake->length - 1] = create_point(tail->x, tail->y);
+    if (!snake->body[snake->length - 1])
+    {
+        return NULL;
+    }
+
+    return snake;
 }

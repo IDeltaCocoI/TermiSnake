@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "config.h"
@@ -18,8 +19,9 @@ int main()
     keypad(stdscr, TRUE);
     nodelay(stdscr, TRUE);
     curs_set(0);
+    srand(time(NULL));
 
-    struct Game *game = new_game();
+    struct Game *game = new_game(NULL);
     if (!game)
     {
         endwin();
@@ -46,13 +48,18 @@ int main()
                 break;
             }
             update_snake(snake);
-        }
-        else if (key == 'q')
-        {
-            break;
+
+            if (snake->body[0]->x == game->apple->x
+                && snake->body[0]->y == game->apple->y)
+            {
+                grow_snake(snake);
+                spawn_apple(game);
+            }
         }
 
         clear();
+
+        mvprintw(game->apple->y, game->apple->x, APPLE_BODY);
 
         attron(A_REVERSE);
         for (size_t i = 0; i < snake->length; ++i)
@@ -63,14 +70,23 @@ int main()
 
         if (paused)
         {
-            mvprintw(LINES / 2, (COLS / 2) - 3, "PAUSE");
+            int status = pause_game(&game, key);
+            if (status == 1 || status == 2)
+            {
+                break;
+            }
+            if (status == 3)
+            {
+                snake = game->snake;
+                paused = 0;
+            }
         }
 
         refresh();
-        usleep(100000);
+        usleep(GAME_SPEED);
     }
 
-    free_snake(snake);
+    free_game(game);
 
     endwin();
     return 0;

@@ -14,5 +14,6 @@ struct Snake
 struct Snake *create_snake(int start_x, int start_y);
 void update_snake(struct Snake *snake);
 void free_snake(struct Snake *snake);
+struct Snake *grow_snake(struct Snake *snake);
 
 #endif
