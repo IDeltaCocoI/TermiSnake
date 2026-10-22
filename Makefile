@@ -1,6 +1,6 @@
 CC := gcc
 TARGET := snake
-SRC := src/main.c src/point.c src/movement.c src/snake.c
+SRC := src/main.c src/point.c src/movement.c src/snake.c src/game.c
 OBJ := $(SRC:.c=.o)
 
 CFLAGS := -std=c99 -pedantic -Wall -Wextra -Werror -Wvla -Iinclude
