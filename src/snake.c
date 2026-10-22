@@ -15,7 +15,7 @@ struct Snake *create_snake(int start_x, int start_y)
         return NULL;
     }
 
-    struct Point **body = malloc(INITIAL_LENGTH * sizeof(struct Point *));
+    struct Point **body = calloc(INITIAL_LENGTH, sizeof(struct Point *));
     if (!body)
     {
         free_snake(snake);
@@ -76,6 +76,8 @@ void free_snake(struct Snake *snake)
                 free(snake->body[i]);
             }
         }
+
+        free(snake->body);
     }
 
     if (snake->direction)

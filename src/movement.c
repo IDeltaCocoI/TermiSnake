@@ -2,11 +2,8 @@
 
 #include <ncurses.h>
 #include <stddef.h>
-#include <string.h>
 
-#include "config.h"
-
-struct Point *move_snake(struct Point *direction, int key)
+int move_snake(struct Point *direction, int key)
 {
     int dx = direction->x;
     int dy = direction->y;
@@ -14,7 +11,7 @@ struct Point *move_snake(struct Point *direction, int key)
     switch (key)
     {
     case 'q':
-        return NULL;
+        return 1;
     case 'w':
     case KEY_UP:
         if (dy == 0)
@@ -52,5 +49,5 @@ struct Point *move_snake(struct Point *direction, int key)
     direction->x = dx;
     direction->y = dy;
 
-    return direction;
+    return 0;
 }

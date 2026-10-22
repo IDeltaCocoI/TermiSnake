@@ -4,8 +4,16 @@
 #include "point.h"
 #include "snake.h"
 
+enum Status
+{
+    PLAYING = 0,
+    PAUSE = 1,
+    GAME_OVER = 2
+};
+
 struct Game
 {
+    enum Status status;
     struct Snake *snake;
     struct Point *apple;
     long score;
@@ -16,7 +24,11 @@ struct Game
 struct Game *new_game(struct Game *old_game);
 void free_game(struct Game *game);
 
-int pause_game(struct Game **game, int key);
+int update_game(struct Game *game, int key);
+
 void spawn_apple(struct Game *game);
+
+void pause_game(struct Game *game);
+void game_over(struct Game *game);
 
 #endif

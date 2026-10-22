@@ -3,6 +3,6 @@
 
 #include "point.h"
 
-struct Point *move_snake(struct Point *direction, int key);
+int move_snake(struct Point *direction, int key);
 
 #endif

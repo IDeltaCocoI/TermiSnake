@@ -8,8 +8,6 @@
 
 #include "config.h"
 #include "game.h"
-#include "movement.h"
-#include "snake.h"
 
 int main()
 {
@@ -28,58 +26,46 @@ int main()
         return 1;
     }
 
-    struct Snake *snake = game->snake;
-
-    int paused = 0;
-
     while (1)
     {
         int key = getch();
 
-        if (key == ' ')
+        if (key == 'q')
         {
-            paused = !paused;
+            break;
         }
 
-        if (!paused)
+        if (game->status != GAME_OVER && key == ' ')
         {
-            if (!move_snake(snake->direction, key))
-            {
-                break;
-            }
-            update_snake(snake);
-
-            if (snake->body[0]->x == game->apple->x
-                && snake->body[0]->y == game->apple->y)
-            {
-                grow_snake(snake);
-                spawn_apple(game);
-            }
+            game->status = game->status == PLAYING ? PAUSE : PLAYING;
         }
 
-        clear();
-
-        mvprintw(game->apple->y, game->apple->x, APPLE_BODY);
-
-        attron(A_REVERSE);
-        for (size_t i = 0; i < snake->length; ++i)
+        if (update_game(game, key))
         {
-            mvprintw(snake->body[i]->y, snake->body[i]->x, SNAKE_BODY);
+            break;
         }
-        attroff(A_REVERSE);
 
-        if (paused)
+        if (game->status == PAUSE)
         {
-            int status = pause_game(&game, key);
-            if (status == 1 || status == 2)
+            pause_game(game);
+        }
+
+        if (game->status == GAME_OVER)
+        {
+            game_over(game);
+        }
+
+        if ((game->status != PLAYING)
+            && (key == 10 || key == 13
+                || key == KEY_ENTER)) /* When "Enter" key is press */
+        {
+            game = new_game(game);
+            if (!game)
             {
-                break;
+                endwin();
+                return 1;
             }
-            if (status == 3)
-            {
-                snake = game->snake;
-                paused = 0;
-            }
+            game->status = PLAYING;
         }
 
         refresh();
