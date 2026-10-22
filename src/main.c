@@ -1,13 +1,13 @@
 #define _DEFAULT_SOURCE
 #include <ncurses.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <stddef.h>
 
 #include "config.h"
+#include "game.h"
 #include "movement.h"
-#include "point.h"
 #include "snake.h"
 
 int main()
@@ -19,22 +19,38 @@ int main()
     nodelay(stdscr, TRUE);
     curs_set(0);
 
-    struct Snake *snake = create_snake(COLS / 2, LINES / 2);
-    if (!snake)
+    struct Game *game = new_game();
+    if (!game)
     {
+        endwin();
         return 1;
     }
+
+    struct Snake *snake = game->snake;
+
+    int paused = 0;
 
     while (1)
     {
         int key = getch();
 
-        if (!move_snake(snake->direction, key))
+        if (key == ' ')
+        {
+            paused = !paused;
+        }
+
+        if (!paused)
+        {
+            if (!move_snake(snake->direction, key))
+            {
+                break;
+            }
+            update_snake(snake);
+        }
+        else if (key == 'q')
         {
             break;
         }
-
-        update_snake(snake);
 
         clear();
 
@@ -45,8 +61,12 @@ int main()
         }
         attroff(A_REVERSE);
 
-        refresh();
+        if (paused)
+        {
+            mvprintw(LINES / 2, (COLS / 2) - 3, "PAUSE");
+        }
 
+        refresh();
         usleep(100000);
     }
 
